@@ -27,5 +27,4 @@ Name: "{autodesktop}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher\Carro
 Name: "{autodesktop}\C-Assistant"; Filename: "{app}\C-Assistant\C-Assistant.exe"
 
 [UninstallDelete]
-Type: filesandordirs
-Name: "{app}"
+Type: filesandordirs; Name: "{app}"
