@@ -9,8 +9,13 @@ import os
 
 app=QApplication(sys.argv)
 
+if getattr(sys, "frozen", False):
+    BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(sys.executable)))
+else:
+    BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 config=ConfigParser()
-config.read("Settings.ini")
+config.read(os.path.join(BASE_DIR,"launcher d","Settings.ini"))
 show=config.getboolean("Settings","show")
 print(show)
 
@@ -47,10 +52,15 @@ chapp.resize(350,50)
 chapp.move(15,440)
 chapp.show()
 def openapp():
-    subprocess.Popen([
-        sys.executable,
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "chatscreen.py")
-    ])
+    if getattr(sys, "frozen", False):
+        subprocess.Popen([
+            os.path.join(BASE_DIR,"PF-Carrot","PF-Carrot.exe")
+        ])
+    else:
+        subprocess.Popen([
+            sys.executable,
+            os.path.join(BASE_DIR,"app","main.py")
+        ])
 chapp.clicked.connect(openapp)
 
 assl=QLabel("Assistant",widget)
@@ -82,22 +92,27 @@ activateb=DeSwitch(assw)
 activateb.show()
 if show:
     activateb.setChecked(True)
-    subprocess.Popen([
-        sys.executable,
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "assistant.py")
-    ])
+    if getattr(sys, "frozen", False):
+        subprocess.Popen([
+            os.path.join(BASE_DIR,"C-Assistant","C-Assistant.exe")
+        ])
+    else:
+        subprocess.Popen([
+            sys.executable,
+            os.path.join(BASE_DIR,"assistant d","assistant.py")
+        ])
 else:
     activateb.setChecked(False)
 def clicked():
     if not activateb.isChecked():
         activateb.setChecked(True)
         config["Settings"]["show"]="true"
-        with open("Settings.ini","w") as f:
+        with open(os.path.join(BASE_DIR,"launcher d","Settings.ini"),"w") as f:
             config.write(f)
     else:
         activateb.setChecked(False)
         config["Settings"]["show"]="false"
-        with open("Settings.ini","w") as f:
+        with open(os.path.join(BASE_DIR,"launcher d","Settings.ini"),"w") as f:
             config.write(f)
 activateb.clicked.connect(clicked)
 activateb.move(120,340)
