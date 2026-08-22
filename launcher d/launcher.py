@@ -10,7 +10,7 @@ import os
 app=QApplication(sys.argv)
 
 if getattr(sys, "frozen", False):
-    BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(sys.executable)))
+    BASE_DIR=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(sys.executable))))
 else:
     BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -54,7 +54,7 @@ chapp.show()
 def openapp():
     if getattr(sys, "frozen", False):
         subprocess.Popen([
-            os.path.join(BASE_DIR,"PF-Carrot","PF-Carrot.exe")
+            os.path.join(BASE_DIR,"app","PF-Carrot","PF-Carrot.exe")
         ])
     else:
         subprocess.Popen([
@@ -94,7 +94,7 @@ if show:
     activateb.setChecked(True)
     if getattr(sys, "frozen", False):
         subprocess.Popen([
-            os.path.join(BASE_DIR,"C-Assistant","C-Assistant.exe")
+            os.path.join(BASE_DIR,"assistant d","C-Assistant","C-Assistant.exe")
         ])
     else:
         subprocess.Popen([
