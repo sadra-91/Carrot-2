@@ -24,64 +24,149 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyQt6 requests keyboard openai Pillow pycairo svgwrite pyinstaller
 
-      - name: Build PF-Carrot
-        working-directory: app
+      - name: Prepare release folder
         shell: pwsh
         run: |
-          if (Test-Path "PF-Carrot") { Remove-Item "PF-Carrot" -Recurse -Force }
-          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
-          pyinstaller --noconfirm --clean --onedir --windowed --name PF-Carrot --distpath "." --workpath "build" main.py
+          if (Test-Path "release") {
+            Remove-Item "release" -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path "release" | Out-Null
+
+      - name: Build PF-Carrot
+        working-directory: "app"
+        shell: pwsh
+        run: |
+          if (Test-Path "build") {
+            Remove-Item "build" -Recurse -Force
+          }
+
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name PF-Carrot `
+            --distpath "..\release" `
+            --workpath "build" `
+            main.py
 
           Get-ChildItem -File | Where-Object {
-            $_.Name -notin @("main.py")
+            $_.Name -notin @(
+              "main.py",
+              "PF-Carrot.spec"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "PF-Carrot\" -Force
+            Copy-Item $_.FullName "..\release\$($_.Name)" -Force
           }
 
           Get-ChildItem -Directory | Where-Object {
-            $_.Name -notin @("PF-Carrot", "build", "__pycache__")
+            $_.Name -notin @(
+              "build",
+              "__pycache__"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "PF-Carrot\" -Recurse -Force
+            Get-ChildItem $_.FullName -File -Recurse | ForEach-Object {
+              Copy-Item $_.FullName "..\release\$($_.Name)" -Force
+            }
           }
 
       - name: Build C-Assistant
         working-directory: "assistant d"
         shell: pwsh
         run: |
-          if (Test-Path "C-Assistant") { Remove-Item "C-Assistant" -Recurse -Force }
-          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
-          pyinstaller --noconfirm --clean --onedir --windowed --name C-Assistant --distpath "." --workpath "build" assistant.py
+          if (Test-Path "build") {
+            Remove-Item "build" -Recurse -Force
+          }
+
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name C-Assistant `
+            --distpath "..\release" `
+            --workpath "build" `
+            assistant.py
 
           Get-ChildItem -File | Where-Object {
-            $_.Name -notin @("assistant.py")
+            $_.Name -notin @(
+              "assistant.py",
+              "C-Assistant.spec"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "C-Assistant\" -Force
+            Copy-Item $_.FullName "..\release\$($_.Name)" -Force
           }
 
           Get-ChildItem -Directory | Where-Object {
-            $_.Name -notin @("C-Assistant", "build", "__pycache__")
+            $_.Name -notin @(
+              "build",
+              "__pycache__"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "C-Assistant\" -Recurse -Force
+            Get-ChildItem $_.FullName -File -Recurse | ForEach-Object {
+              Copy-Item $_.FullName "..\release\$($_.Name)" -Force
+            }
           }
 
       - name: Build Carrot-Launcher
         working-directory: "launcher d"
         shell: pwsh
         run: |
-          if (Test-Path "Carrot-Launcher") { Remove-Item "Carrot-Launcher" -Recurse -Force }
-          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
-          pyinstaller --noconfirm --clean --onedir --windowed --name Carrot-Launcher --distpath "." --workpath "build" launcher.py
+          if (Test-Path "build") {
+            Remove-Item "build" -Recurse -Force
+          }
+
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onefile `
+            --windowed `
+            --name Carrot-Launcher `
+            --distpath "..\release" `
+            --workpath "build" `
+            launcher.py
 
           Get-ChildItem -File | Where-Object {
-            $_.Name -notin @("launcher.py")
+            $_.Name -notin @(
+              "launcher.py",
+              "Carrot-Launcher.spec"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "Carrot-Launcher\" -Force
+            Copy-Item $_.FullName "..\release\$($_.Name)" -Force
           }
 
           Get-ChildItem -Directory | Where-Object {
-            $_.Name -notin @("Carrot-Launcher", "build", "__pycache__")
+            $_.Name -notin @(
+              "build",
+              "__pycache__"
+            )
           } | ForEach-Object {
-            Copy-Item $_.FullName "Carrot-Launcher\" -Recurse -Force
+            Get-ChildItem $_.FullName -File -Recurse | ForEach-Object {
+              Copy-Item $_.FullName "..\release\$($_.Name)" -Force
+            }
+          }
+
+      - name: Remove empty and temporary files
+        shell: pwsh
+        run: |
+          Get-ChildItem "release" -Recurse -Force | Where-Object {
+            $_.PSIsContainer -or
+            $_.Name -like "*.spec" -or
+            $_.Name -like "*.py"
+          } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+      - name: Verify release folder
+        shell: pwsh
+        run: |
+          Write-Host "Final release contents:"
+          Get-ChildItem "release" -Recurse | Select-Object FullName
+
+          $directories = Get-ChildItem "release" -Directory -Recurse
+
+          if ($directories.Count -gt 0) {
+            Write-Error "Release folder contains subdirectories."
+            exit 1
           }
 
       - name: Install Inno Setup
