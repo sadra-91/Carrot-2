@@ -28,37 +28,25 @@ jobs:
         working-directory: app
         shell: pwsh
         run: |
-          pyinstaller `
-            --noconfirm `
-            --clean `
-            --onedir `
-            --windowed `
-            --name PF-Carrot `
-            main.py
+          if (Test-Path "PF-Carrot") { Remove-Item "PF-Carrot" -Recurse -Force }
+          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
+          pyinstaller --noconfirm --clean --onedir --windowed --name PF-Carrot --distpath "." --workpath "build" main.py
 
       - name: Build C-Assistant
         working-directory: "assistant d"
         shell: pwsh
         run: |
-          pyinstaller `
-            --noconfirm `
-            --clean `
-            --onedir `
-            --windowed `
-            --name C-Assistant `
-            assistant.py
+          if (Test-Path "C-Assistant") { Remove-Item "C-Assistant" -Recurse -Force }
+          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
+          pyinstaller --noconfirm --clean --onedir --windowed --name C-Assistant --distpath "." --workpath "build" assistant.py
 
       - name: Build Carrot-Launcher
         working-directory: "launcher d"
         shell: pwsh
         run: |
-          pyinstaller `
-            --noconfirm `
-            --clean `
-            --onedir `
-            --windowed `
-            --name Carrot-Launcher `
-            launcher.py
+          if (Test-Path "Carrot-Launcher") { Remove-Item "Carrot-Launcher" -Recurse -Force }
+          if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
+          pyinstaller --noconfirm --clean --onedir --windowed --name Carrot-Launcher --distpath "." --workpath "build" launcher.py
 
       - name: Install Inno Setup
         shell: pwsh
