@@ -23,29 +23,17 @@ QToolTip {
 }
 """)
 config=ConfigParser()
-if getattr(sys, "frozen", False):
-    BASE_DIR=os.path.dirname(os.path.abspath(sys.executable))
-else:
-    BASE_DIR=os.path.dirname(os.path.abspath(__file__))
-app_data=os.path.join(os.environ.get("LOCALAPPDATA",os.path.expanduser("~")),"PF-Carrot")
-os.makedirs(app_data,exist_ok=True)
 class DStyledListWidget(QListWidget):
     def addStyledItem(self,text):
         pattern=r'\*(.*?)\*'
         styledtext=re.sub(pattern,r'<i style="color:gray;">\1</i>',text)
         item=QListWidgetItem(styledtext)
         self.addItem(item)
-settings_filename=os.path.join(app_data,"settings.json")
+settings_filename="settings.json"
 if not os.path.exists(settings_filename):
-    original_settings=os.path.join(BASE_DIR,"settings.json")
-    if os.path.exists(original_settings):
-        with open(original_settings,"r",encoding="utf-8") as f:
-            settingsfile=json.load(f)
-    else:
-        settingsfile={"mode":0}
-    with open(settings_filename,"w",encoding="utf-8") as f:
-        json.dump(settingsfile,f,indent=4)
-with open(settings_filename,"r",encoding="utf-8") as f:
+    with open(settings_filename,"w") as f:
+        json.dump({"mode":0},f,indent=4)
+with open(settings_filename,"r") as f:
     settingsfile=json.load(f)
 b=settingsfile["mode"]%2
 chatmode=0
@@ -70,7 +58,7 @@ replyonid=None
 window=QMainWindow()
 window.showMaximized()
 window.setWindowTitle("PF-Carrot")
-window.setWindowIcon(QIcon(os.path.join(BASE_DIR,"carrot.png")))
+window.setWindowIcon(QIcon("carrot.png"))
 if(b==0):
     window.setStyleSheet("background-color:#00011a")
 elif(b==1):
@@ -107,9 +95,9 @@ if(chatmode==0):
     send=QPushButton(window)
     send.move(1472,722)
     if(b==0):
-        send.setIcon(QIcon(os.path.join(BASE_DIR,"send.png")))
+        send.setIcon(QIcon("send.png"))
     else:
-        send.setIcon(QIcon(os.path.join(BASE_DIR,"light-send.png")))
+        send.setIcon(QIcon("light-send.png"))
     send.setStyleSheet("background:none;background:transparent;padding:0px;border:1px solid gray;border-radius:20px")
     send.setIconSize(QSize(42,42))
     send.setFixedSize(42,42)
@@ -163,19 +151,19 @@ if(chatmode==0):
             co.move(70,10)
             co.resize(30,35)
             co.setStyleSheet("border:none")
-            co.setIcon(QIcon(os.path.join(BASE_DIR,"copyicon.png")))
+            co.setIcon(QIcon("copyicon.png"))
             co.setIconSize(QSize(30,35))
             co.setToolTip("copy to clipboard")
             co.show()
             canceli=QPushButton(options)
             canceli.resize(30,30)
             canceli.move(985,10)
-            canceli.setIcon(QIcon(os.path.join(BASE_DIR,"canceli.png")))
+            canceli.setIcon(QIcon("canceli.png"))
             canceli.setIconSize(QSize(30,30))
             canceli.setToolTip("back")
             canceli.show()
             replyb=QPushButton(options)
-            replyb.setIcon(QIcon(os.path.join(BASE_DIR,"reply.png")))
+            replyb.setIcon(QIcon("reply.png"))
             replyb.resize(32,32)
             replyb.setIconSize(QSize(25,25))
             replyb.move(22,10)
@@ -206,7 +194,7 @@ if(chatmode==0):
             del mhistory[0]
         #mhistory.append(f"user message(old):{text}")
         mhistory.append(f"assistant:{output}")
-        conn=sqlite3.connect(os.path.join(app_data,"appdatabase.db"))
+        conn=sqlite3.connect("appdatabase.db")
         cursor=conn.cursor()
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS messages(
@@ -232,20 +220,20 @@ if(chatmode==0):
         # if(replyyy==True):
         #     reply.hide()
         #     replyyy=False
-        send.setIcon(QIcon(os.path.join(BASE_DIR,"send.png")))
+        send.setIcon(QIcon("send.png"))
         send.blockSignals(False)
     prof=QPushButton(window)
     prof.resize(42,42)
     prof.setStyleSheet("background:none;border:none")
     prof.move(1420,722)
-    prof.setIcon(QIcon(os.path.join(BASE_DIR,"download.png")))
+    prof.setIcon(QIcon("download.png"))
     prof.setIconSize(QSize(42,42))
     prof.setToolTip("improve my prompt")
     def desfi(aaanswer):
         textbar.setPlainText(aaanswer)
         prof.blockSignals(False)
         print("khodafez")
-        prof.setIcon(QIcon(os.path.join(BASE_DIR,"download.png")))
+        prof.setIcon(QIcon("download.png"))
     def imppro():
         print("salam")
         cee=textbar.toPlainText()
@@ -260,7 +248,7 @@ if(chatmode==0):
         thread.signals.finished.connect(desfi)
         thread.start()
         prof.blockSignals(True)
-        prof.setIcon(QIcon(os.path.join(BASE_DIR,"answering.png")))
+        prof.setIcon(QIcon("answering.png"))
     prof.clicked.connect(imppro)
     def textch():
         global alshow
@@ -282,7 +270,7 @@ if(chatmode==0):
     textbar.textChanged.connect(textch)
 
     def sendmessage():
-        config.read(os.path.join(BASE_DIR,"persona.ini"),encoding="utf-8")
+        config.read("persona.ini",encoding="utf-8")
         personaa=config["AI"]["persona"]
         global charcount
         charcount=0
@@ -326,14 +314,13 @@ if(chatmode==0):
             translate.hide()
             global currentchatid
             if(currentchatid==None):
-                conn=sqlite3.connect(os.path.join(app_data,"appdatabase.db"))
+                conn=sqlite3.connect("appdatabase.db")
                 cursor=conn.cursor()
                 cursor.execute("""
                 CREATE TABLE IF NOT EXISTS chats(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 chatname TEXT,
-                date DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
+                date DATETIME DEFAULT CURRENT_TIMESTAMP)
                 """)
                 conn.commit()
                 cursor.execute("""
@@ -388,7 +375,7 @@ if(chatmode==0):
             if replyyy==True:
                 replyyy=False
                 relabel.hide()
-            send.setIcon(QIcon(os.path.join(BASE_DIR,"answering.png")))
+            send.setIcon(QIcon("answering.png"))
             send.blockSignals(True)
 
 
@@ -513,7 +500,7 @@ if(chatmode==0):
     barunderlay.show()
     newchat=QPushButton(bar)
     newchat.setStyleSheet("background:none;background:transparent;border:none")
-    newchat.setIcon(QIcon(os.path.join(BASE_DIR,"newchat.png")))
+    newchat.setIcon(QIcon("newchat.png"))
     newchat.resize(35,35)
     newchat.setIconSize(QSize(33,33))
     newchat.move(983,12)
@@ -541,7 +528,7 @@ if(chatmode==0):
         QTimer.singleShot(2000, ncc.hide)
     newchat.clicked.connect(createnewchat)
     chath=QPushButton(bar)
-    chath.setIcon(QIcon(os.path.join(BASE_DIR,"chathistory.png")))
+    chath.setIcon(QIcon("chathistory.png"))
     chath.resize(35,35)
     chath.setIconSize(QSize(33,33))
     chath.move(940,10)
@@ -551,7 +538,7 @@ if(chatmode==0):
     def showchat(idnumber):
         global currentchatid
         currentchatid=idnumber
-        conn=sqlite3.connect(os.path.join(app_data,"appdatabase.db"))
+        conn=sqlite3.connect("appdatabase.db")
         cursor=conn.cursor()
         cursor.execute("""
         SELECT message
@@ -609,7 +596,7 @@ if(chatmode==0):
         zxc.setStyleSheet("border:none;background:none;border-radius:30px")
         historylay=QHBoxLayout(zxc)
         historylay.setAlignment(Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignCenter)
-        conn=sqlite3.connect(os.path.join(app_data,"appdatabase.db"))
+        conn=sqlite3.connect("appdatabase.db")
         cursor=conn.cursor()
         cursor.execute("""
         SELECT id,chatname,date FROM chats
@@ -659,32 +646,26 @@ if(chatmode==0):
         profile.setStyleSheet("background-color:white;border:2px solid black;border-radius:20px;")
     profile.show()
     if(b==0):
-        profilephoto=QPixmap(os.path.join(BASE_DIR,"profilephoto.png"))
+        profilephoto=QPixmap("profilephoto.png")
     else:
-        profilephoto=QPixmap(os.path.join(BASE_DIR,"profilephoto-light.png"))
+        profilephoto=QPixmap("profilephoto-light.png")
     pfp=QLabel(window)
     pfp.setPixmap(profilephoto.scaled(75,75))
     pfp.resize(75,75)
     pfp.move(30,620)
     pfp.setStyleSheet("border:1px;background:none;background:transparent")
     pfp.show()
-    file_name=os.path.join(app_data,"count.json")
+    file_name=("count.json")
     if not os.path.exists(file_name):
-        original_count=os.path.join(BASE_DIR,"count.json")
-        if os.path.exists(original_count):
-            with open(original_count,"r",encoding="utf-8") as f:
-                count=json.load(f)
-        else:
-            count={"datacount":0}
-        with open(file_name,"w",encoding="utf-8") as f:
-            json.dump(count,f,indent=4)
-    with open(file_name,"r",encoding="utf-8") as f:
+        with open(file_name,"w") as f:
+            json.dump({"datacount":0},f,indent=4)
+    with open(file_name,"r") as f:
         count=json.load(f)
     if count["datacount"]==0:
         config["AI"]={
             "persona":"None"
         }
-        with open (os.path.join(app_data,"persona.ini"),"w",encoding="utf-8") as file:
+        with open ("persona.ini","w",encoding="utf-8") as file:
             config.write(file)
     if count["datacount"]==0:
         nametag=QLabel("unknown",window)
@@ -732,14 +713,14 @@ if(chatmode==0):
         skip.show()
         skip.clicked.connect(skip.hide)
         skip.clicked.connect(finish.hide)
-        file=os.path.join(app_data,"data.json")
+        file="data.json"
         if not os.path.exists(file):
             with open(file,"w") as f:
                 json.dump({"name":name,"age":age,"email":email},f,indent=4)
         count["datacount"]+=1
         with open(file_name,"w") as f:
             json.dump(count,f,indent=4)
-    with open(os.path.join(app_data,"data.json"),"r") as f:
+    with open("data.json","r") as f:
         data=json.load(f)
     hoora=QLabel("🎉",window)
     hoora.resize(1100,360)
@@ -875,14 +856,14 @@ if(chatmode==0):
         cancelbtn.clicked.connect(pwindow.hide)
         def save():
             persona=personabox.toPlainText()
-            config.read(os.path.join(app_data,"persona.ini"))
+            config.read("persona.ini")
             if persona:
                 config["AI"]["persona"]=persona
-                with open(os.path.join(app_data,"persona.ini"),"w") as f:
+                with open("persona.ini","w") as f:
                     config.write(f)
             if persona==None:
                 config["AI"]["persona"]="None"
-                with open(os.path.join(app_data,"persona.ini"),"w") as f:
+                with open("persona.ini","w") as f:
                     config.write(f)
             personabox.clear()
             pwindow.hide()
@@ -918,22 +899,22 @@ if(chatmode==0):
         which,ok=QInputDialog.getText(window,"PF-Carrot","enter name for changing name\nenter age for changing age\nenter email for changing email")
         if (which=="name"):
             name,ok=QInputDialog.getText(window,"PF-Carrot","enter your name")
-            with open(os.path.join(app_data,"data.json"),"r") as file:
+            with open("data.json","r") as file:
                 data=json.load(file)
             data["name"]=name
-            with open(os.path.join(app_data,"data.json"),"w") as file:
+            with open("data.json","w") as file:
                 json.dump(data,file,indent=4)
         elif(which==age):
-            with open(os.path.join(app_data,"data.json"),"r") as file:
+            with open("data.json","r") as file:
                 data=json.load(file)
             data["age"]=age
-            with open(os.path.join(app_data,"data.json"),"w") as file:
+            with open("data.json","w") as file:
                 json.dump(data,file,indent=4)
         elif(which==age):
-            with open(os.path.join(app_data,"data.json"),"r") as file:
+            with open("data.json","r") as file:
                 data=json.load(file)
             data["email"]=email
-            with open(os.path.join(app_data,"data.json"),"w") as file:
+            with open("data.json","w") as file:
                 json.dump(data,file,indent=4)    
     change.clicked.connect(changeinformation)
     setc=QPushButton("👩set character",window)
@@ -1803,22 +1784,10 @@ if(chatmode==0):
                     asdf()
 
             def createc(filepath="characters.json"):
-                appdata=os.path.join(os.environ.get("LOCALAPPDATA",os.path.expanduser("~")),"PF-Carrot")
-                os.makedirs(appdata,exist_ok=True)
-                filepath=os.path.join(appdata,"characters.json")
-                numberpath=os.path.join(appdata,"characternumber.json")
-                if not os.path.exists(numberpath):
-                    sourcepath=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),"characternumber.json")
-                    if not getattr(sys,"frozen",False):
-                        sourcepath=os.path.join(os.path.dirname(os.path.abspath(__file__)),"characternumber.json")
-                    if os.path.exists(sourcepath):
-                        with open(sourcepath,"r",encoding="utf-8") as f:
-                            with open(numberpath,"w",encoding="utf-8") as out:
-                                out.write(f.read())
-                    else:
-                        with open(numberpath,'w', encoding='utf-8') as f:
-                            json.dump(0, f)
-                with open(numberpath,'r',encoding="utf-8") as f:
+                if not os.path.exists("characternumber.json"):
+                    with open("characternumber.json", 'w', encoding='utf-8') as f:
+                        json.dump(0, f)
+                with open('characternumber.json','r',encoding="utf-8") as f:
                     num=json.load(f)
                 num+=1
                 ncname=nchnameb.text()
@@ -1827,23 +1796,15 @@ if(chatmode==0):
                 nchinfo=nchdb.toPlainText()
                 nchid=f"character{num}"
                 characters={}
-                if not os.path.exists(filepath):
-                    sourcepath=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),"characters.json")
-                    if not getattr(sys,"frozen",False):
-                        sourcepath=os.path.join(os.path.dirname(os.path.abspath(__file__)),"characters.json")
-                    if os.path.exists(sourcepath):
-                        with open(sourcepath,"r",encoding="utf-8") as f:
-                            characters=json.load(f)
-                else:
-                    try:
-                        with open(filepath,"r",encoding="utf-8") as f:
-                            characters=json.load(f)
-                        if not isinstance(characters, dict):
-                            characters = {}
-                    except json.JSONDecodeError:
-                        characters={}
-                    except FileNotFoundError:
-                        pass
+                try:
+                    with open("characters.json","r",encoding="utf-8") as f:
+                        characters=json.load(f)
+                    if not isinstance(characters, dict):
+                        characters = {}
+                except json.JSONDecodeError:
+                    characters={}
+                except FileNotFoundError:
+                    pass
                 characters[nchid]={
                     "id":nchid,
                     "namee":ncname,
@@ -1852,9 +1813,9 @@ if(chatmode==0):
                     "info":nchinfo,
                     "profile":"profilephoto.png"
                 }
-                with open(filepath, "w", encoding="utf-8") as f:
+                with open("characters.json", "w", encoding="utf-8") as f:
                     json.dump(characters, f, ensure_ascii=False, indent=2)
-                with open(numberpath,'w',encoding="utf-8") as f:
+                with open('characternumber.json','w',encoding="utf-8") as f:
                     json.dump(num,f)
                 crcsc.hide()
                 rpmenu.hide()
@@ -1967,7 +1928,7 @@ if(chatmode==0):
             mlist.setMaximumWidth(screen.width()-8)
             mlist.show()
             def itemch(item):
-                path=os.path.join(os.environ.get("LOCALAPPDATA",os.path.expanduser("~")),"PF-Carrot",f"{tchid}history.json")
+                path=f"{tchid}history.json"
                 send2.hide()
                 opbar=QWidget(screen)
                 opbar.move(40,screen.height()-70)
@@ -2062,15 +2023,12 @@ if(chatmode==0):
             mlist.show()
             def robinrp():
                 mhistory.append(tchgreeting)
-                path=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),f"{tchid}history.json")
+                path=f"{tchid}history.json"
                 if not os.path.exists(path):
                     with open(path, "w", encoding="utf-8") as f:
                         json.dump([], f, ensure_ascii=False)
                 with open(path, "r", encoding="utf-8") as f:
-                    try:
-                        salam = list(json.load(f))
-                    except (json.JSONDecodeError, TypeError):
-                        salam = []
+                    salam = list(json.load(f))
                 num=len(salam)
                 for i in range(num):
                     if i%2==0:
@@ -2101,15 +2059,9 @@ if(chatmode==0):
                 mc=1
             robinrp()
             def sendmessage2():
-                path=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),f"{tchid}history.json")
-                if not os.path.exists(path):
-                    with open(path, "w", encoding="utf-8") as f:
-                        json.dump([], f, ensure_ascii=False)
+                path=f"{tchid}history.json"
                 with open(path, "r", encoding="utf-8") as f:
-                    try:
-                        salam =list(json.load(f))
-                    except (json.JSONDecodeError, TypeError):
-                        salam = []
+                    salam =list(json.load(f))
                 global text2
                 text2=rptextbar.toPlainText()
                 print(text2)
@@ -2129,15 +2081,9 @@ if(chatmode==0):
                 def ja():
                     
                     global mc
-                    path=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),f"{tchid}history.json")
-                    if not os.path.exists(path):
-                        with open(path, "w", encoding="utf-8") as f:
-                            json.dump([], f, ensure_ascii=False)
+                    path=f"{tchid}history.json"
                     with open(path, "r", encoding="utf-8") as f:
-                        try:
-                            salam = json.load(f)
-                        except (json.JSONDecodeError, TypeError):
-                            salam = []
+                        salam = json.load(f)
                     print("salam")
                     timer.stop()
                     pbar.hide()
@@ -2172,7 +2118,7 @@ if(chatmode==0):
                             salam.append(text2)
                             salam.append(output)
                             mc+=1
-                        path=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),f"{tchid}history.json")
+                        path=f"{tchid}history.json"
                         with open(path, "w", encoding="utf-8") as f:
                             json.dump(salam, f, ensure_ascii=False, indent=4)
                     #except:
@@ -2199,17 +2145,11 @@ if(chatmode==0):
             send2.clicked.connect(sendmessage2)
             send2.clicked.connect(javab2)
         rhbutton.clicked.connect(rp)
-        charpath=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),"characters.json")
-        if not os.path.exists(charpath):
+        if not os.path.exists("characters.json"):
             thechlist={}
         else:
-            try:
-                with open(charpath,"r",encoding="utf-8")as f:
-                    thechlist=json.load(f)
-                if not isinstance(thechlist,dict):
-                    thechlist={}
-            except (json.JSONDecodeError, TypeError):
-                thechlist={}
+            with open("characters.json","r",encoding="utf-8")as f:
+                thechlist=json.load(f)
         gchcount=len(thechlist)
         a=0
         def openc(tchname, tchbio, tchgreeting, tchinfo, tchid, tchprofile):
@@ -2219,9 +2159,9 @@ if(chatmode==0):
             tchname=gch["namee"]
             tchbio=gch["bio"]
             tchgreeting=gch["greeting"]
-            tchinfo=gch["info"]
+            tchinfo=gch["greeting"]
             tchid=gch["id"]
-            tchprofile=os.path.join(os.path.dirname(os.path.abspath(sys.executable)),gch["profile"])
+            tchprofile=gch["profile"]
             chwidget=QWidget()
             chwidget.setFixedSize(360,90)
             chwidget.setStyleSheet("border:none;border-bottom:1px solid gray;border-radius:0px")
@@ -2437,7 +2377,7 @@ if(chatmode==0):
     dvp.clicked.connect(showdevp)
 else:
     bg=QLabel(window)
-    bgp=QPixmap(os.path.join(os.path.dirname(os.path.abspath(sys.executable)),"chatbglight.jpg"))
+    bgp=QPixmap("chatbglight.jpg")
     bg.setPixmap(bgp.scaled(1920,1080))
     bg.move(0,0)
     bg.resize(1920,1080)
@@ -2504,3 +2444,5 @@ else:
     dfont=QFont("calibri",14)
     cd.setFont(dfont)
     cd.setStyleSheet("color:gray;border:none;")
+    cd.show()
+app.exec()
