@@ -26,29 +26,53 @@ jobs:
 
       - name: Build PF-Carrot
         working-directory: app
+        shell: pwsh
         run: |
-          pyinstaller --noconfirm --clean --onefile --windowed --name PF-Carrot main.py
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onedir `
+            --windowed `
+            --name PF-Carrot `
+            main.py
 
       - name: Build C-Assistant
         working-directory: "assistant d"
+        shell: pwsh
         run: |
-          pyinstaller --noconfirm --clean --onefile --windowed --name C-Assistant assistant.py
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onedir `
+            --windowed `
+            --name C-Assistant `
+            assistant.py
 
       - name: Build Carrot-Launcher
         working-directory: "launcher d"
+        shell: pwsh
         run: |
-          pyinstaller --noconfirm --clean --onefile --windowed --name Carrot-Launcher launcher.py
+          pyinstaller `
+            --noconfirm `
+            --clean `
+            --onedir `
+            --windowed `
+            --name Carrot-Launcher `
+            launcher.py
 
       - name: Install Inno Setup
+        shell: pwsh
         run: |
-          choco install innosetup -y
+          choco install innosetup -y --no-progress
 
       - name: Build Installer
+        shell: pwsh
         run: |
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer.iss"
 
       - name: Upload Installer
         uses: actions/upload-artifact@v4
         with:
           name: Carrot-Installer
           path: installer-output\Carrot-Installer.exe
+          if-no-files-found: error
