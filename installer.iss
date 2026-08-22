@@ -14,6 +14,9 @@ UninstallDisplayName=PF-Carrot
 [Files]
 Source: "release\*"; DestDir: "{app}"; Flags: ignoreversion
 
+[Dirs]
+Name: "{app}"; Permissions: users-modify
+
 [Icons]
 Name: "{group}\PF-Carrot"; Filename: "{app}\PF-Carrot.exe"
 Name: "{group}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
