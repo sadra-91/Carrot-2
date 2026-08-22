@@ -32,6 +32,18 @@ jobs:
           if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
           pyinstaller --noconfirm --clean --onedir --windowed --name PF-Carrot --distpath "." --workpath "build" main.py
 
+          Get-ChildItem -File | Where-Object {
+            $_.Name -notin @("main.py")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "PF-Carrot\" -Force
+          }
+
+          Get-ChildItem -Directory | Where-Object {
+            $_.Name -notin @("PF-Carrot", "build", "__pycache__")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "PF-Carrot\" -Recurse -Force
+          }
+
       - name: Build C-Assistant
         working-directory: "assistant d"
         shell: pwsh
@@ -40,6 +52,18 @@ jobs:
           if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
           pyinstaller --noconfirm --clean --onedir --windowed --name C-Assistant --distpath "." --workpath "build" assistant.py
 
+          Get-ChildItem -File | Where-Object {
+            $_.Name -notin @("assistant.py")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "C-Assistant\" -Force
+          }
+
+          Get-ChildItem -Directory | Where-Object {
+            $_.Name -notin @("C-Assistant", "build", "__pycache__")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "C-Assistant\" -Recurse -Force
+          }
+
       - name: Build Carrot-Launcher
         working-directory: "launcher d"
         shell: pwsh
@@ -47,6 +71,18 @@ jobs:
           if (Test-Path "Carrot-Launcher") { Remove-Item "Carrot-Launcher" -Recurse -Force }
           if (Test-Path "build") { Remove-Item "build" -Recurse -Force }
           pyinstaller --noconfirm --clean --onedir --windowed --name Carrot-Launcher --distpath "." --workpath "build" launcher.py
+
+          Get-ChildItem -File | Where-Object {
+            $_.Name -notin @("launcher.py")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "Carrot-Launcher\" -Force
+          }
+
+          Get-ChildItem -Directory | Where-Object {
+            $_.Name -notin @("Carrot-Launcher", "build", "__pycache__")
+          } | ForEach-Object {
+            Copy-Item $_.FullName "Carrot-Launcher\" -Recurse -Force
+          }
 
       - name: Install Inno Setup
         shell: pwsh
@@ -63,4 +99,3 @@ jobs:
         with:
           name: Carrot-Installer
           path: installer-output\Carrot-Installer.exe
-          if-no-files-found: error
