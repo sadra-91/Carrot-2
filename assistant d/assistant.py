@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import QApplication, QWidget,QPushButton,QLabel,QProgressBar,QScrollArea,QVBoxLayout
 from PyQt6.QtCore import Qt,QTimer,QThread,pyqtSignal,QSize
 from PyQt6.QtGui import QFont,QIcon
+from openai import OpenAI
+import subprocess
 import requests
 import keyboard
 import time
@@ -10,6 +12,8 @@ print("salam")
 shouldshow=False
 ragt=""
 ustext=""
+apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 app = QApplication(sys.argv)
 clipboard=app.clipboard()
 lctime = 0
@@ -124,30 +128,24 @@ class OllamaThread(QThread):
         self.userprompt = userprompt
     def run(self):
         try:
-            response = requests.post(
-                "http://localhost:11434/api/chat",
-                json={
-                    "model": "gemma3:4b",
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": self.systemprompt
-                        },
-                        {
-                            "role": "user",
-                            "content": self.userprompt
-                        }
-                    ],
-                    "stream": False
-                },
-                timeout=300
+            response = client.chat.completions.create(
+                model="deepseek-v4-flash",
+                messages= [
+                       {
+                           "role": "system",
+                        "content": self.systemprompt
+                    },
+                    {
+                        "role": "user",
+                        "content": self.userprompt
+                    }
+                ],
+                 stream=False
+            
             )
 
-            response.raise_for_status()
 
-            data = response.json()
-
-            answer = data["message"]["content"]
+            answer = response.choices[0].message.content
 
             self.finished.emit(answer)
 
@@ -286,6 +284,7 @@ rules:
 4-Keep the main ideas and important details. Remove unnecessary information.""")
 summarizeb.clicked.connect(lambda:starting(sumrag))
 def ragiss():
+    global ragt
     ragt=sumrag
 summarizeb.clicked.connect(ragiss)
 explainrag=("""You are a text explanation engine.
@@ -304,6 +303,7 @@ Rules:
 """)
 explainb.clicked.connect(lambda:starting(explainrag))
 def ragisex():
+    global ragt
     ragt=explainrag
 explainb.clicked.connect(ragisex)
 rewriterag=("""You rewrite text.
@@ -322,8 +322,79 @@ Rules:
 """)
 rewriteb.clicked.connect(lambda:starting(rewriterag))
 def ragisre():
+    global ragt
     ragt=rewriterag
 rewriteb.clicked.connect(ragisre)
+def showmore():
+    window.setFixedWidth(500)
+    morewid=QWidget(window)
+    morewid.move(350,0)
+    morewid.resize(120,90)
+    morewid.setStyleSheet("background-color:#f8f8f8;border:1px solid gray;border-radius:15px")
+    def hidemore():
+        morewid.hide()
+        window.resize(340,120)
+        hidebbb.hide()
+    hidebbb=QPushButton(window)
+    hidebbb.setStyleSheet("border:none;background:none")
+    hidebbb.resize(340,window.height())
+    hidebbb.show()
+    hidebbb.clicked.connect(hidemore)
+    morewid.show()
+    answb=QPushButton("Answer",morewid)
+    answb.setStyleSheet("""
+QPushButton{
+border:none;
+background:none;
+color:gray
+}
+QPushButton:hover{
+background-color:#d0d0d0;
+border-radius:8px
+}""")
+    answb.setFont(QFont("calibri",18))
+    answb.move(20,10)
+    answb.show()
+    openappb=QPushButton("ask Carrot",morewid)
+    openappb.setStyleSheet("""
+    QPushButton{
+    border:none;
+    background:none;
+    color:gray
+    }
+    QPushButton:hover{
+    background-color:#d0d0d0;  
+    border-radius:8px
+    }""")
+    openappb.setFont(QFont("calibri",17))
+    openappb.move(10,50)
+    openappb.show()
+    answerp="""
+    you have to design an answer for the input
+    your answer should be natural
+    and your answer should only contain the final answer
+    """
+    answb.clicked.connect(lambda:starting(answerp))
+    def answbbb():
+        global ragt
+        ragt=answerp
+        morewid.hide()
+    answb.clicked.connect(answbbb)
+    def openapp():
+        if getattr(sys, "frozen", False):
+            subprocess.Popen([
+                os.path.join(BASE_DIR, "PF-Carrot.exe")
+            ])
+        else:
+            subprocess.Popen([
+                sys.executable,
+                os.path.join(BASE_DIR, "main.py")
+            ])
+    openappb.clicked.connect(openapp)
+
+chapp.clicked.connect(openapp)
+
+moreb.clicked.connect(showmore)
 backb.clicked.connect(window.hide)
 def showwindow():
     print("show")
