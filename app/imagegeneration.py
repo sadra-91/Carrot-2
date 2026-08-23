@@ -3,10 +3,8 @@ from openai import OpenAI
 import requests
 
 
-client = OpenAI(
-    base_url="https://api.gapgpt.app/v1",
-    api_key="sk-xinzXT2JdmccXqahtq7crpo0yDP5ZNuH4lwDUEcN3noGi0fR"
-)
+apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 
 planner_prompt = """
 You are an expert image planner.
