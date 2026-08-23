@@ -38,6 +38,9 @@ with open(settings_filename,"r") as f:
 b=settingsfile["mode"]%2
 chatmode=0
 charcount=0
+apikey=None
+apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+print(apikey)
 crw=None
 prlabel=None
 progress=None
@@ -71,7 +74,7 @@ y=70
 frame.move(x,y)
 frame.show()
 a=True
-client=OpenAI(base_url="https://api.gapgpt.app/v1", api_key="sk-paxScEL4ymELOMpgkSugxIO2HF4ikzsoONDKX9Oc8JKUPW3B")
+client=OpenAI(base_url="https://api.gapgpt.app/v1", api_key=apikey)
 mc=1
 currentchatid=None
 if(chatmode==0):
@@ -178,7 +181,7 @@ if(chatmode==0):
             replyb.clicked.connect(reply)
         
     ml.itemClicked.connect(selected)
-    itemfont=QFont("Candara",21)
+    itemfont=QFont("Candara",14)
     # itemfont.setBold(True)
     mhistory=[]
     def streaming(text):
@@ -488,7 +491,24 @@ if(chatmode==0):
         modelch.show()
         QTimer.singleShot(2000,modelch.hide)
     modelb.textActivated.connect(onchange)
+    def showsiteb():
+        hidebb=QPushButton(window)
+        hidebb.setStyleSheet("border:none;background:none")
+        hidebb.resize(window.width(),window.height())
+        hidebb.clicked.connect(hidebb.hide)
+        hidebb.show()
+        sitew=QPushButton("Download Android app",window)
+        sitew.resize(200,40)
+        sitew.setStyleSheet("border:1px solid gray;border-radius:10px")
+        sitew.setFont(QFont("Calibri",13))
+        sitew.move(521,thbutton.y()+10)
+        def salambazshod():
+            webbrowser.open("pf-c.ir")
+        sitew.clicked.connect(salambazshod)
+        sitew.show()
+        hidebb.clicked.connect(sitew.hide)
     thbutton=QPushButton("︙",bar)
+    thbutton.clicked.connect(showsiteb)
     thbutton.move(1,15)
     thbutton.setFont(QFont("calibri",16))
     thbutton.setStyleSheet("border:none;color:gray")
@@ -508,6 +528,7 @@ if(chatmode==0):
     newchat.show()
     def createnewchat():
         ml.clear()
+        global mhistory
         mhistory=[]
         mc=0
         wLabel.show()
@@ -759,7 +780,7 @@ if(chatmode==0):
     etag.show()
     nametag.show()
     agetag.show()
-    dmode=QPushButton("🌗dark/light mode",window)
+    dmode=QPushButton("🖼️ Create a picture",window)
     dmodefont=QFont("calibri",15)
     dmode.setFont(dmodefont)
     dmode.move(10,200)
@@ -783,7 +804,7 @@ if(chatmode==0):
         settingsfile["mode"]+=1
         with open(settings_filename,"w") as f:
           json.dump(settingsfile,f,indent=4)
-    dmode.clicked.connect(changemode)
+    #dmode.clicked.connect(changemode)
     pb=QPushButton("👤persona",window)
     pb.resize(95,50)
     pb.move(10,150)
@@ -1441,6 +1462,7 @@ if(chatmode==0):
         createb.clicked.connect(lambda:generate(crew,crtextb,crnameb))
     cpicture=QPushButton("create a picture",window)
     cpicture.clicked.connect(create)
+    dmode.clicked.connect(create)
     if(b==0):
         cpicture.setStyleSheet("background-color:#1E2A56;border:1px solid gray;border-radius:20px;")
     else:
@@ -2090,37 +2112,60 @@ if(chatmode==0):
                     timer.stop()
                     pbar.hide()
                     output=""
+                    client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
+
                     payload = {
-                        "model": "llama3.1:8b",
+                        "model": "deepseek-v4-flash",
                         "messages": [
                             {
                                 "role": "system",
-                                "content":f'You are in a role play.u are {tchname}.this is a description for u and the chat scenario and the story of the chat and how u should act:{tchinfo}.Never mention being an AI or break character.actions are enclosed in asterisks (`**`).dialouge is enclosed in single quotes (" ").this two things are necessary.dont forget them.try to act as humanal as u can.answer to users message and let the scenario keep going.this is your chat history:{mhistory};but dont concentrate on it.it is only for u to know what happened in the chat and what is the scenario about.also use linebreak in your texts'
+                                "content":f'''You are {tchname}. Stay fully in character based on this character and scenario description:
+
+                            {tchinfo}
+
+                            Never mention being an AI or break character. Act naturally and humanly, keeping your personality, emotions, behavior, and relationships consistent with the scenario.
+
+                            Actions MUST be enclosed in *asterisks*:
+                            *she smiles*
+
+                            Dialogue MUST be enclosed in "double quotation marks":
+                            "How are you?"
+
+                            Use line breaks naturally. Do not control or speak for the user. React naturally to their messages and let the scenario develop organically.
+
+                            Chat history:
+                            {mhistory}
+
+                            Use the history only to maintain continuity. Do not focus on or mention it explicitly.
+
+                            Respond to the user's latest message and continue the roleplay.
+                            '''
                             },
                             {"role": "user", "content": text2}
                         ],
-                        "stream": False
                     }
-                    with requests.post("http://127.0.0.1:11434/api/chat", json=payload, stream=True) as r:
-                        for line in r.iter_lines(decode_unicode=True):
-                            if not line:
-                                continue
-                            chunk = json.loads(line)
-                            botmessage = chunk.get("message", {}).get("content", "")
-                            if botmessage:
-                                output+=botmessage
-                            crw.setText(f"{tchname}:\n{output}")
-                            mhistoryc=len(mhistory)
-                            if mhistoryc==30:
-                                del mhistory[14]
-                            mhistory.append(f"user message(old):{text2}")
-                            mhistory.append(f"your(bots) message(old):{output}")
-                            salam.append(text2)
-                            salam.append(output)
-                            mc+=1
-                        path=f"{tchid}history.json"
-                        with open(path, "w", encoding="utf-8") as f:
-                            json.dump(salam, f, ensure_ascii=False, indent=4)
+
+                    response = client.chat.completions.create(
+                        model=payload["model"],
+                        messages=payload["messages"]
+                    )
+
+                    output = response.choices[0].message.content
+                    crw.setText(f"{tchname}:\n{output}")
+
+                    mhistoryc=len(mhistory)
+                    if mhistoryc>=30:
+                        del mhistory[0:2]
+                    mhistory.append(f"user:{text2}")
+                    mhistory.append(f"assistant:{output}")
+
+                    salam.append(text2)
+                    salam.append(output)
+                    mc+=1
+
+                    path=f"{tchid}history.json"
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(salam, f, ensure_ascii=False, indent=4)
                     #except:
                         #crw.setText(f"Unknown Error")
                 def timesheh():
@@ -2193,8 +2238,8 @@ if(chatmode==0):
             layout.addWidget(chwidget)
             a+=1
     crp.clicked.connect(roleplay)
-    dvp=QPushButton("</> developer pannel",menu)
-    dvp.move(10,450)
+    dvp=QPushButton("</> smart prompt design",menu)
+    dvp.move(20,450)
     dvp.setStyleSheet("border:none")
     dvp.show()
     dvp.resize(200,50)
@@ -2311,7 +2356,7 @@ if(chatmode==0):
             border:1px solid gray;
             border-radius:5px
         }""")
-        devlabel=QLabel("Developer options",devpannel)
+        devlabel=QLabel("Prompt design",devpannel)
         devlabel.move(60,20)
         devlabelf=QFont("Calibri",20)
         devlabelf.setBold(True)
