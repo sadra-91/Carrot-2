@@ -1,9 +1,11 @@
 import requests
 import json
+from openai import OpenAI
 from threading import Thread
 from PyQt6.QtCore import QObject, pyqtSignal
 
-
+apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 class aianswer(Thread):
     def __init__(self, message, history, callback, streamf, model,replying,retext,charname,charage,charper,charhobbies,persona):
         super().__init__(daemon=True)
@@ -41,6 +43,7 @@ class aianswer(Thread):
                             - Otherwise, do not greet the user or introduce yourself again.
                             - Reply only to the latest user message.
                             - Use the chat history only for context and continuity. Do not respond to earlier messages unless the latest message refers to them.
+                            -dont repeat anything
 
                             Chat history:
                             {self.history}
@@ -75,28 +78,24 @@ class aianswer(Thread):
             "content": f"{self.message}"
         })
         try:
-            response = requests.post(
-                "http://127.0.0.1:11434/api/chat",
-                json={
-                    "model": self.modeln,
-                    "messages":messagesl,
-                    "stream": True
-                },
+            response = client.chat.completions.create(
+                model="deepseek-v4-flash",
+                messages=messagesl,
                 stream=True
             )
 
             answer = ""
 
-            for line in response.iter_lines(decode_unicode=True):
-                if not line:
+            for chunk in response:
+                if not chunk.choices:
                     continue
 
-                data = json.loads(line)
+                content = chunk.choices[0].delta.content
 
-                if "message" in data:
-                    chunk = data["message"]["content"]
-                    answer += chunk
+                if content:
+                    answer += content
                     self.signals.stream.emit(answer)
+                    print("STREAM:", answer)
 
 
         except Exception as e:
