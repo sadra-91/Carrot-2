@@ -186,11 +186,15 @@ if(chatmode==0):
     mhistory=[]
     def streaming(text):
         global charcount
+        if text.startswith("Carrot:\n"):
+            text=text[8:]
         if charcount==0:
             timer.stop()
         charcount+=1
         crw.setText(f"Carrot:\n{text}")
     def extract(output):
+        if output.startswith("Carrot:\n"):
+            output=output[8:]
         crw.setText(f"Carrot:\n{output}")
         mhistoryc=len(mhistory)
         if mhistoryc==90:
