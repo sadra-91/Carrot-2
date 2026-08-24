@@ -18,13 +18,14 @@ Source: "release\*"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{app}"; Permissions: users-modify
 
 [Icons]
+Name: "{autodesktop}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
+
 Name: "{group}\PF-Carrot"; Filename: "{app}\PF-Carrot.exe"
 Name: "{group}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
 Name: "{group}\C-Assistant"; Filename: "{app}\C-Assistant.exe"
 
-Name: "{autodesktop}\PF-Carrot"; Filename: "{app}\PF-Carrot.exe"
-Name: "{autodesktop}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
-Name: "{autodesktop}\C-Assistant"; Filename: "{app}\C-Assistant.exe"
+[Registry]
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "PF-Carrot Launcher"; ValueData: """{app}\Carrot-Launcher.exe"""; Flags: uninsdeletevalue
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
