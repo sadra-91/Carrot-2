@@ -1368,7 +1368,7 @@ if(chatmode==0):
     jokefont=QFont("Arial",12)
     joke.setFont(jokefont)
     joke.show()
-    joke.clicked.connect(readydo("tell me a joke"))
+    joke.clicked.connect(lambda:readydo("tell me a joke"))
     def ifinish(success,result):
         prlabel.hide()
         progress.hide()
@@ -1510,7 +1510,7 @@ if(chatmode==0):
     imusic.move(630,240)
     imusic.setFont(translatefont)
     imusic.show()
-    imusic.clicked.connect(readydo("introduce me some songs"))
+    imusic.clicked.connect(lambda:readydo("introduce me some songs"))
 
     add=QPushButton("+",window)
     add.move(535,730)
