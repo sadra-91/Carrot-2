@@ -1355,7 +1355,9 @@ if(chatmode==0):
     
     setc.clicked.connect(setcharacter)
 
-
+    def readydo(text):
+        textbar.setPlainText(text)
+        sendmessage()
     joke=QPushButton("tell me a joke",window)
     if(b==0):
         joke.setStyleSheet("background-color:#1E2A56;border:1px solid gray;border-radius:20px;")
@@ -1366,6 +1368,7 @@ if(chatmode==0):
     jokefont=QFont("Arial",12)
     joke.setFont(jokefont)
     joke.show()
+    joke.clicked.connect(redydo("tell me a joke"))
     def ifinish(success,result):
         prlabel.hide()
         progress.hide()
@@ -1485,6 +1488,8 @@ if(chatmode==0):
     cpicturefont=QFont("Arial",12)
     cpicture.setFont(cpicturefont)
     cpicture.show()
+    def tra():
+        textbar.setPlainText("translate to      :\n")
     translate=QPushButton("translate for me",window)
     if(b==0):
         translate.setStyleSheet("background-color:#1E2A56;border:1px solid gray;border-radius:20px;")
@@ -1495,6 +1500,7 @@ if(chatmode==0):
     translatefont=QFont("Arial",12)
     translate.setFont(translatefont)
     translate.show()
+    translate.clicked.connect(tra)
     imusic=QPushButton("introduce me some songs",window)
     if(b==0):
         imusic.setStyleSheet("background-color:#1E2A56;border:1px solid gray;border-radius:20px;")
@@ -1504,6 +1510,7 @@ if(chatmode==0):
     imusic.move(630,240)
     imusic.setFont(translatefont)
     imusic.show()
+    imusic.clicked.connect(readydo("introduce me some songs"))
 
     add=QPushButton("+",window)
     add.move(535,730)
