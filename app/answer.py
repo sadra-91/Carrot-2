@@ -79,7 +79,7 @@ class aianswer(Thread):
         })
         try:
             response = client.chat.completions.create(
-                model="deepseek-v4-flash",
+                model=self.modeln,
                 messages=messagesl,
                 stream=True
             )
