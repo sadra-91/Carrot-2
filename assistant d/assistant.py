@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QWidget,QPushButton,QLabel,QProgressBar,QScrollArea,QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget,QPushButton,QLabel,QProgressBar,QScrollArea,QVBoxLayout,QMessageBox
 from PyQt6.QtCore import Qt,QTimer,QThread,pyqtSignal,QSize
 from PyQt6.QtGui import QFont,QIcon
 from openai import OpenAI
@@ -44,8 +44,10 @@ def getapi():
         apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
     except requests.RequestException:
         window.show()
-        QMessageBox.information(window, "Info", "Please connect to there internet")
+        container.hide()
+        QMessageBox.information(window, "Info", "Please connect to the internet")
         window.hide()
+        container.show()
         getapi()
 getapi()
 client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
@@ -393,15 +395,9 @@ border-radius:8px
         morewid.hide()
     answb.clicked.connect(answbbb)
     def openapp():
-        if getattr(sys, "frozen", False):
-            subprocess.Popen([
-                os.path.join(BASE_DIR, "PF-Carrot.exe")
-            ])
-        else:
-            subprocess.Popen([
-                sys.executable,
-                os.path.join(BASE_DIR, "main.py")
-            ])
+        subprocess.Popen([
+            os.path.join(BASE_DIR, "PF-Carrot.exe")
+        ])
     openappb.clicked.connect(openapp)
 
 
