@@ -148,7 +148,7 @@ if(chatmode==0):
             options=QWidget(window)
             options.move(503,0)
             options.setStyleSheet("background-color:#1E2A56")
-            options.resize(.width(),bar.height())
+            options.resize(bar.width(),bar.height())
             options.show()
             co=QPushButton(options)
             co.move(70,10)
