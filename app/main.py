@@ -92,8 +92,8 @@ if(chatmode==0):
         textbar.setStyleSheet("background-color:#1E2A56;border:1px solid gray;border-radius:15px;padding:5px;")
     else:
         textbar.setStyleSheet("background-color:#EAEAEA;color:black;border:2px solid black;border-radius:15px;padding:5px")
-    textbar.move(570,725)
-    textbar.resize(900,40)
+    textbar.move(535,725)
+    textbar.resize(930,40)
     textbar.show()
     send=QPushButton(window)
     send.move(1472,722)
@@ -1515,7 +1515,6 @@ if(chatmode==0):
     addfont=QFont("Arial",25)
     ###addfont.setBold(True)
     add.setFont(addfont)
-    add.show()
     def addsmth():
         fk=QWidget(window)
         fk.resize(150,200)
