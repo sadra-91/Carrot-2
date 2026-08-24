@@ -80,7 +80,7 @@ class ImageGenerator(QThread):
 
         try:
             plan_response = client.chat.completions.create(
-                    model= "deepseek-v4-flash",
+                    model= "gpt-5-mini",
                     messages=[
                         {
                             "role": "system",
@@ -96,7 +96,7 @@ class ImageGenerator(QThread):
             image_description = plan_response.choices[0].message.content
 
             code_response = client.chat.completions.create(
-                    model= "deepseek-v4-flash",
+                    model= "gpt-5-mini",
                     messages=[
                         {
                             "role": "system",
