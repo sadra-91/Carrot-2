@@ -7,12 +7,14 @@ import requests
 import keyboard
 import time
 import sys
+import sos
 
 print("salam")
 shouldshow=False
 ragt=""
 ustext=""
-apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+apikey=""
+    
 client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 app = QApplication(sys.argv)
 clipboard=app.clipboard()
@@ -37,6 +39,16 @@ container2.resize(300,50)
 container2.move(20,10)
 container2.setStyleSheet("border-radius:20px;background-color:#d3d3d3;border-bottom:1px solid gray;border-top:none;border-right:none;border-left:none")
 container2.show()
+def getapi():
+    global apikey
+    try:
+        apikey=requests.get("https://pf-c.ir/key.txt").text.strip()
+    except requests.RequestException:
+        window.show()
+        QMessageBox.information(window, "Info", "Please connect to there internet")
+        window.hide()
+        getapi()
+getapi()
 name=QLabel("PF-Carrot",container2)
 name.setStyleSheet("border:none;background:none;color:gray")
 namefont=QFont("times new roman",24)
