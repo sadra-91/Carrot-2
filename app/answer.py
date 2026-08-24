@@ -53,6 +53,7 @@ class aianswer(Thread):
                 and notice that users message is about this message of yours in the chat:
                 
                 assitant:{self.remessage}
+                - Do not write "Carrot:" before your responses.
                 """
 
     def run(self):
