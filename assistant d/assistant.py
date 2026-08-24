@@ -7,7 +7,7 @@ import requests
 import keyboard
 import time
 import sys
-import sos
+import os
 
 print("salam")
 shouldshow=False
