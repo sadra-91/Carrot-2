@@ -15,7 +15,6 @@ ragt=""
 ustext=""
 apikey=""
     
-client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 app = QApplication(sys.argv)
 clipboard=app.clipboard()
 lctime = 0
@@ -49,6 +48,7 @@ def getapi():
         window.hide()
         getapi()
 getapi()
+client = OpenAI(base_url="https://api.gapgpt.app/v1",api_key=apikey)
 name=QLabel("PF-Carrot",container2)
 name.setStyleSheet("border:none;background:none;color:gray")
 namefont=QFont("times new roman",24)
