@@ -298,7 +298,7 @@ if(chatmode==0):
                 lllayout.addWidget(replyingwidget)
                 messagew=QLabel(text)
                 messagew.setFont(QFont("Candara",17))
-                messagew.setStyleSheet("border:none;background:none;font-family:Candara;font-size:22pt")
+                messagew.setStyleSheet("border:none;background:none;font-family:Candara;font-size:15pt")
                 messagew.setWordWrap(True)
                 lllayout.addWidget(messagew)
             
