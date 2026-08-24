@@ -343,7 +343,7 @@ def showmore():
     window.setFixedWidth(500)
     morewid=QWidget(window)
     morewid.move(350,0)
-    morewid.resize(120,90)
+    morewid.resize(120,55)
     morewid.setStyleSheet("background-color:#f8f8f8;border:1px solid gray;border-radius:15px")
     def hidemore():
         morewid.hide()
@@ -369,20 +369,7 @@ border-radius:8px
     answb.setFont(QFont("calibri",18))
     answb.move(20,10)
     answb.show()
-    openappb=QPushButton("ask Carrot",morewid)
-    openappb.setStyleSheet("""
-    QPushButton{
-    border:none;
-    background:none;
-    color:gray
-    }
-    QPushButton:hover{
-    background-color:#d0d0d0;  
-    border-radius:8px
-    }""")
-    openappb.setFont(QFont("calibri",17))
-    openappb.move(10,50)
-    openappb.show()
+    
     answerp="""
     you have to design an answer for the input
     your answer should be natural
@@ -394,11 +381,6 @@ border-radius:8px
         ragt=answerp
         morewid.hide()
     answb.clicked.connect(answbbb)
-    def openapp():
-        subprocess.Popen([
-            os.path.join(BASE_DIR, "PF-Carrot.exe")
-        ])
-    openappb.clicked.connect(openapp)
 
 
 moreb.clicked.connect(showmore)
