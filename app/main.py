@@ -1368,7 +1368,7 @@ if(chatmode==0):
     jokefont=QFont("Arial",12)
     joke.setFont(jokefont)
     joke.show()
-    joke.clicked.connect(redydo("tell me a joke"))
+    joke.clicked.connect(readydo("tell me a joke"))
     def ifinish(success,result):
         prlabel.hide()
         progress.hide()
