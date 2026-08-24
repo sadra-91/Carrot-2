@@ -343,7 +343,7 @@ def showmore():
     window.setFixedWidth(500)
     morewid=QWidget(window)
     morewid.move(350,0)
-    morewid.resize(120,55)
+    morewid.resize(120,50)
     morewid.setStyleSheet("background-color:#f8f8f8;border:1px solid gray;border-radius:15px")
     def hidemore():
         morewid.hide()
