@@ -18,10 +18,10 @@ Source: "release\*"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{app}"; Permissions: users-modify
 
 [Icons]
-Name: "{autodesktop}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
+Name: "{autodesktop}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"; IconFilename: "{app}\12icon.ico"
 
 Name: "{group}\PF-Carrot"; Filename: "{app}\PF-Carrot.exe"
-Name: "{group}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"
+Name: "{group}\PF-Carrot Launcher"; Filename: "{app}\Carrot-Launcher.exe"; IconFilename: "{app}\12icon.ico"
 Name: "{group}\C-Assistant"; Filename: "{app}\C-Assistant.exe"
 
 [Registry]
