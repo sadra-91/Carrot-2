@@ -392,7 +392,6 @@ border-radius:8px
             ])
     openappb.clicked.connect(openapp)
 
-chapp.clicked.connect(openapp)
 
 moreb.clicked.connect(showmore)
 backb.clicked.connect(window.hide)
