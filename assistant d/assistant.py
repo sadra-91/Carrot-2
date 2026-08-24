@@ -382,11 +382,14 @@ border-radius:8px
     answb.clicked.connect(answbbb)
     def openapp():
         if getattr(sys, "frozen", False):
-            app_path = os.path.join(os.path.dirname(sys.executable), "PF-Carrot.exe")
-            subprocess.Popen([app_path], cwd=os.path.dirname(app_path))
+            subprocess.Popen([
+                os.path.join(BASE_DIR, "PF-Carrot.exe")
+            ])
         else:
-            app_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "main.py")
-            subprocess.Popen([sys.executable, app_path], cwd=os.path.dirname(app_path))
+            subprocess.Popen([
+                sys.executable,
+                os.path.join(BASE_DIR, "main.py")
+            ])
     openappb.clicked.connect(openapp)
 
 
