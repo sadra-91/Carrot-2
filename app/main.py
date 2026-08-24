@@ -55,7 +55,7 @@ charage=None
 charhobbies=None
 chochname="Carrot"
 retext="aa"
-modelname="llama3.1:8b"
+modelname="deepseek-v4-flash"
 replyyy=False
 replyonid=None
 window=QMainWindow()
@@ -148,7 +148,7 @@ if(chatmode==0):
             options=QWidget(window)
             options.move(503,0)
             options.setStyleSheet("background-color:#1E2A56")
-            options.resize(bar.width(),bar.height())
+            options.resize(.width(),bar.height())
             options.show()
             co=QPushButton(options)
             co.move(70,10)
@@ -473,10 +473,10 @@ if(chatmode==0):
     modelb.resize(900,40)
     modelb.move(525,7)
     modelb.show()
-    modelb.addItem("gemma3:1b(less smart but very fast)","gemma3:1b")
-    modelb.addItem("llama3.1:8b(Default)","llama3.1:8b")
-    modelb.addItem("gemma3:12b","gemma3:12b")
-    modelb.addItem("qwen3:14b","qwen3:14b")
+    modelb.addItem("gpt-5-mini","gpt-5-mini")
+    modelb.addItem("deepseek-v4-flash(Default)","deepseek-v4-flash")
+    modelb.addItem("gemini-3.1-flash-lite","gemini-3.1-flash-lite")
+    modelb.addItem("qwen3-coder","qwen-3-coder")
     modelb.setCurrentIndex(-1)
     def onchange(text):
         global modelname
@@ -1382,6 +1382,19 @@ if(chatmode==0):
             errlabel.setStyleSheet("border:none;color:orange")
             errlabel.show()
             errlabel.move(20,20)
+        backb=QPushButton("back",resw)
+        backb.setStyleSheet("""
+        QPushButton{
+        background-color:#1e2a56;border-radius:24px;border:none}
+        QPushButton::hover{
+        background-color:#1e2a56;border-radius:22px;border:1px solid gray;width:130;height:60
+        }""")
+        backb.resize(120,50)
+        backb.move(560,470)
+        backb.setFont(QFont("calibri",16))
+        backb.show()
+        backb.clicked.connect(resw.hide)
+        
             
     def generate(crew,crtextb,crnameb):
         global prlabel
